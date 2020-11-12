@@ -7,7 +7,7 @@ function setup() {
   // let cnv = createCanvas(400, 400);
   let cnv = createCanvas(windowWidth, windowHeight);
 
-  frequencySlider = createSlider(1, 440, 1);
+  frequencySlider = createSlider(1, 440);
   frequencySlider.position(100, 26);
   frequencySlider.style('width', windowWidth-120 + 'px');
 
@@ -53,6 +53,9 @@ function setFrequency(freq) {
 
 // Prefer firebase frequency, then slider value
 function getFrequency() {
+  if (firebaseFrequency === undefined) {
+    return undefined;
+  }
   // First check and prefer firebase frequency
   if (firebaseFrequency != frequency) {
     setFrequency(firebaseFrequency);
@@ -82,10 +85,12 @@ function draw() {
   f = getFrequency();
   osc.freq(f);
   
-  textSize(12);
-  text('Frequency', 20, 20);
-  textSize(24);
-  text(f +'hz', 20, 44);
+  if (f != undefined) {
+    textSize(12);
+    text('Frequency', 20, 20);
+    textSize(24);
+    text(f +'hz', 20, 44);
+  }
 
   let rectLength = windowWidth-40;
   rect(20, 100, rectLength, 100);

@@ -13,11 +13,13 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var frequencyGlobal = db.collection("frequency").doc("global");
 
+let firebaseFrequency;
 
 // When global data is updated
 frequencyGlobal.onSnapshot(function(doc) {
 	    console.log("get freq: ", doc.data().frequency);
-	    setFrequency(doc.data().frequency);
+	    //setFrequency(doc.data().frequency);
+	    firebaseFrequency = doc.data().frequency;
 	});
 
 function setFirebaseFrequency(freq) {

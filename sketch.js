@@ -46,13 +46,20 @@ function setFrequency(freq) {
     frequency = freq;
     frequencySlider.value(freq);
   }
+  if (firebaseFrequency != freq) {
+    setFirebaseFrequency(frequency);
+  }
 }
 
-// Prefer slider value
+// Prefer firebase frequency, then slider value
 function getFrequency() {
+  // First check and prefer firebase frequency
+  if (firebaseFrequency != frequency) {
+    setFrequency(firebaseFrequency);
+  }
+  // Then see if the slider has changed
   if (frequencySlider.value() != frequency) {
-    frequency = frequencySlider.value();
-    setFirebaseFrequency(frequency);
+    setFrequency(frequencySlider.value());
   }
   return frequency;
 }

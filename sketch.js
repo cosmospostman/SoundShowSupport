@@ -1,4 +1,5 @@
 let pulse;
+let frequency;
 let frequencySlider;
 let isPlaying = false;
 
@@ -39,8 +40,20 @@ function noteButtonList(notes) {
   });
 }
 
+// Manual update => set state and slider
 function setFrequency(freq) {
+  frequency = freq;
   frequencySlider.value(freq);
+  setFirebaseFrequency(freq);
+}
+
+// Prefer slider value
+function getFrequency() {
+  if (frequencySlider.value() != frequency) {
+    frequency = frequencySlider.value();
+    setFirebaseFrequency(frequency);
+  }
+  return frequency;
 }
 
 function startPulse() {
@@ -58,10 +71,7 @@ function startPulse() {
 function draw() {
   background(220);
   
-  f = frequencySlider.value();
-  console.log(f);
-  //let w = constrain(0.005*f, 0.005, 0.1)
-  // pulse.width(.05);
+  f = getFrequency();
   osc.freq(f);
   
   textSize(12);

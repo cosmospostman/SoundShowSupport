@@ -12,13 +12,12 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var frequencyGlobal = db.collection("frequency").doc("global");
+var frequencyConfig = db.collection("frequency").doc("config");
 
 let firebaseFrequency;
 
 // When global data is updated
 frequencyGlobal.onSnapshot(function(doc) {
-	    console.log("get freq: ", doc.data().frequency);
-	    //setFrequency(doc.data().frequency);
 	    firebaseFrequency = doc.data().frequency;
 	});
 
@@ -28,5 +27,17 @@ function setFirebaseFrequency(freq) {
 		frequencyGlobal.set({
 			frequency: freq
 		});
+	}
+}
+
+frequencyConfig.onSnapshot(function(doc) {
+	    config = doc.data();
+	    invalidateConfig();
+	});
+
+function setFirebaseConfig(config) {
+	console.log("set config " + config);
+	if(config) {
+		frequencyConfig.set(config);
 	}
 }

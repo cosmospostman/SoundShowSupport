@@ -1,21 +1,33 @@
-let pulse;
+let osc;
 let frequency;
 let frequencySlider;
 let isPlaying = false;
+let config = {
+  localSound: false,
+  showKeys: false
+}
+let adminMode = false;
 
 function setup() {
   // let cnv = createCanvas(400, 400);
+  let params = getURLParams();
   let cnv = createCanvas(windowWidth, windowHeight);
+  adminMode = params.admin;
+  osc = new p5.Oscillator('square');
+  osc.amp(1.0);
 
   frequencySlider = createSlider(1, 440);
   frequencySlider.position(100, 26);
   frequencySlider.style('width', windowWidth-120 + 'px');
 
-  button = createButton('Play/Stop');
-  button.position(20, 55);
-  button.mousePressed(startPulse);
+  playStopButton = createButton('Play/Stop');
+  playStopButton.position(20, 55);
+  playStopButton.mousePressed(startPulse);
+  playStopButton.class('playStopButton');
 
-  notes = [ ['A', 110.00],
+  notes = [ ['+', '+'],
+            ['-', '-'],
+            ['A', 110.00],
             ['B', 123.47],
             ['C', 130.81],
             ['D', 146.83],
@@ -25,8 +37,28 @@ function setup() {
             ['A', 220.00] ];
   noteButtonList(notes);
 
-  osc = new p5.Oscillator('square');
-  osc.amp(0.5);
+  if (adminMode) {
+    checkboxLocalSound = createCheckbox('Local sound', false);
+    checkboxLocalSound.elt.onchange = function() {
+      config.localSound = checkboxLocalSound.checked();
+      invalidateConfig();
+      setFirebaseConfig(config);
+    };
+    checkboxShowKeys = createCheckbox('Show keys', false);
+    checkboxShowKeys.elt.onchange = function() {
+      config.showKeys = checkboxShowKeys.checked();
+      invalidateConfig();
+      setFirebaseConfig(config);
+    };
+  }
+  invalidateConfig();
+}
+
+function invalidateConfig() {
+  select('.playStopButton').style('display', adminMode || config.localSound ? 'block' : 'none');
+  selectAll('.keys').forEach(function(e) {
+    e.style('display', config.showKeys ? 'block' : 'none');
+  });
 }
 
 function noteButtonList(notes) {
@@ -37,14 +69,19 @@ function noteButtonList(notes) {
     button.mousePressed(function(){
       setFrequency(n[1]);
     });
+    if (n[0] != '+' && n[0] != '-') {
+      button.class('keys');
+    }
   });
 }
 
 // Manual update => set state and slider
 function setFrequency(freq) {
   if (freq != frequency) {
-    frequency = freq;
-    frequencySlider.value(freq);
+    if (freq == '+') { frequency++; }
+    else if (freq == '-') { frequency--; }
+    else { frequency = freq; }
+    frequencySlider.value(frequency);
   }
   if (firebaseFrequency != freq) {
     setFirebaseFrequency(frequency);
@@ -89,7 +126,7 @@ function draw() {
     textSize(12);
     text('Frequency', 20, 20);
     textSize(24);
-    text(f +'hz', 20, 44);
+    text(f +'Hz', 20, 44);
   }
 
   let rectLength = windowWidth-40;

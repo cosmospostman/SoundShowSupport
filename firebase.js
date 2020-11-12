@@ -16,11 +16,15 @@ var frequencyGlobal = db.collection("frequency").doc("global");
 
 // When global data is updated
 frequencyGlobal.onSnapshot(function(doc) {
-	    console.log("Current data: ", doc.data());
+	    console.log("get freq: ", doc.data().frequency);
+	    setFrequency(doc.data().frequency);
 	});
 
 function setFirebaseFrequency(freq) {
-	frequencyGlobal.set({
-		frequency: 1
-	});
+	console.log("set freq " + freq);
+	if(freq) {
+		frequencyGlobal.set({
+			frequency: freq
+		});
+	}
 }

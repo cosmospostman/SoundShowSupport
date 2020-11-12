@@ -42,9 +42,10 @@ function noteButtonList(notes) {
 
 // Manual update => set state and slider
 function setFrequency(freq) {
-  frequency = freq;
-  frequencySlider.value(freq);
-  setFirebaseFrequency(freq);
+  if (freq != frequency) {
+    frequency = freq;
+    frequencySlider.value(freq);
+  }
 }
 
 // Prefer slider value

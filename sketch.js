@@ -1,22 +1,23 @@
+// Global state variables
 let osc;
 let frequency;
 let frequencySlider;
 let isPlaying = false;
-let config = {
-  localSound: false,
-  showKeys: false
-}
 let adminMode = false;
 let isSliding = false;
 
+// setup() is called by p5js once at program start.
 function setup() {
-  // let cnv = createCanvas(400, 400);
+  // Check url params for ?admin=true
   let params = getURLParams();
-  let cnv = createCanvas(windowWidth, windowHeight);
   adminMode = params.admin;
+
+  // Canvas and oscillator
+  let cnv = createCanvas(windowWidth, windowHeight - 40);
   osc = new p5.Oscillator('square');
   osc.amp(1.0);
 
+  // Add frequency slider
   frequencySlider = createSlider(1, 440);
   frequencySlider.position(100, 26);
   frequencySlider.style('width', windowWidth-120 + 'px');
@@ -33,13 +34,15 @@ function setup() {
     isSliding = false;
   });
 
+  // Add play/stop button
   playStopButton = createButton('Play/Stop');
   playStopButton.position(20, 55);
-  playStopButton.mousePressed(startPulse);
+  playStopButton.mousePressed(playStopPressed);
   playStopButton.class('playStopButton');
 
-  notes = [ ['+', '+'],
-            ['-', '-'],
+  // Add some frequency shifting buttons
+  notes = [ ['-', '-'],
+            ['+', '+'],
             ['A', 110.00],
             ['B', 123.47],
             ['C', 130.81],
@@ -48,8 +51,9 @@ function setup() {
             ['F', 174.61],
             ['G', 196.00],
             ['A', 220.00] ];
-  noteButtonList(notes);
+  createNoteButtonList(notes);
 
+  // Add extra controls if admin mode
   if (adminMode) {
     checkboxLocalSound = createCheckbox('Local sound', false);
     checkboxLocalSound.elt.onchange = function() {
@@ -64,17 +68,11 @@ function setup() {
       setFirebaseConfig(config);
     };
   }
+
   invalidateConfig();
 }
 
-function invalidateConfig() {
-  select('.playStopButton').style('display', adminMode || config.localSound ? 'block' : 'none');
-  selectAll('.keys').forEach(function(e) {
-    e.style('display', config.showKeys ? 'block' : 'none');
-  });
-}
-
-function noteButtonList(notes) {
+function createNoteButtonList(notes) {
   let i=0;
   notes.forEach(function(n) {
     button = createButton(n[0]);
@@ -88,7 +86,18 @@ function noteButtonList(notes) {
   });
 }
 
-// Manual update => set state and slider
+// Show or hide the play/stop button and frequency keys
+// depending on the current config
+function invalidateConfig() {
+  select('.playStopButton').style('display', adminMode || config.localSound ? 'block' : 'none');
+  selectAll('.keys').forEach(function(e) {
+    e.style('display', config.showKeys ? 'block' : 'none');
+  });
+}
+
+
+// Handle clicks on -+ABCDEFGA buttons and from Firebase.
+// Set local state, update the slider, and Firebase if needed.
 function setFrequency(freq) {
   if (freq != frequency) {
     if (freq == '+') { frequency++; }
@@ -101,23 +110,26 @@ function setFrequency(freq) {
   }
 }
 
-// Prefer firebase frequency, then slider value
+// Decide which source to prefer for frequency value, called from draw()
 function getFrequency() {
+  // Don't do anything until Firebase frequency is loaded
   if (firebaseFrequency === undefined) {
     return undefined;
   }
-  // If not sliding, then prefer firebase frequency
+  // If slider is not actively in use, then prefer firebase frequency
   if (!isSliding && firebaseFrequency != frequency) {
     setFrequency(firebaseFrequency);
   }
-  // Then see if the slider has changed
+  // Otherwise get the latest value from the slider
   if (frequencySlider.value() != frequency) {
     setFrequency(frequencySlider.value());
   }
+  // By now, frequency should be up to date
   return frequency;
 }
 
-function startPulse() {
+// Toggle the oscillator on or off.
+function playStopPressed() {
   if (isPlaying) {
     // Stop playing
     osc.stop();
@@ -128,7 +140,8 @@ function startPulse() {
   isPlaying = !isPlaying;
 }
 
-
+// draw() is called by p5js continuously.
+// We also use it to update the oscillator frequency.
 function draw() {
   background(220);
   
@@ -156,10 +169,5 @@ function drawDots(rectLength, freq) {
 
   for (let i=0; i<freq; i++) {
     circle(x + 5 + gap*(i+1), y, d)
-
   }
-
-
 }
-
-

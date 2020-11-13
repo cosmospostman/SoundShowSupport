@@ -7,6 +7,7 @@ let config = {
   showKeys: false
 }
 let adminMode = false;
+let isSliding = false;
 
 function setup() {
   // let cnv = createCanvas(400, 400);
@@ -19,6 +20,18 @@ function setup() {
   frequencySlider = createSlider(1, 440);
   frequencySlider.position(100, 26);
   frequencySlider.style('width', windowWidth-120 + 'px');
+  frequencySlider.mousePressed(function() {
+    isSliding = true;
+  });
+  frequencySlider.mouseReleased(function() {
+    isSliding = false;
+  });
+    frequencySlider.touchStarted(function() {
+    isSliding = true;
+  });
+  frequencySlider.touchEnded(function() {
+    isSliding = false;
+  });
 
   playStopButton = createButton('Play/Stop');
   playStopButton.position(20, 55);
@@ -93,8 +106,8 @@ function getFrequency() {
   if (firebaseFrequency === undefined) {
     return undefined;
   }
-  // First check and prefer firebase frequency
-  if (firebaseFrequency != frequency) {
+  // If not sliding, then prefer firebase frequency
+  if (!isSliding && firebaseFrequency != frequency) {
     setFrequency(firebaseFrequency);
   }
   // Then see if the slider has changed

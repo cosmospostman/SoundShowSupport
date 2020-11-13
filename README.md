@@ -27,3 +27,7 @@ Use `https://cosmospostman.github.io/?admin=true` to control audience access to 
   * What about note buttons for other octaves... how about a real keyboard?
   * What do other waveforms sound like (sine, sawtooth)?
   * It would be really cool to let users draw one cycle of a wave form and oscillate with that (→ conversations about synthesis)
+
+**Who is cosmospostman?**
+
+He flies around the universe delivering important messages.

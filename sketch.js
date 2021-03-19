@@ -1,3 +1,14 @@
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js', {scope: './'})
+  .then((reg) => {
+    // registration worked
+    console.log('Registration succeeded. Scope is ' + reg.scope);
+  }).catch((error) => {
+    // registration failed
+    console.log('Registration failed with ' + error);
+  });
+}
+
 // Global state variables
 let osc;
 let frequency;
@@ -13,14 +24,14 @@ function setup() {
   adminMode = params.admin;
 
   // Canvas and oscillator
-  let cnv = createCanvas(windowWidth, windowHeight - 40);
+  let cnv = createCanvas(windowWidth, windowHeight);
   osc = new p5.Oscillator('square');
   osc.amp(1.0);
 
   // Add frequency slider
-  frequencySlider = createSlider(1, 440);
-  frequencySlider.position(100, 26);
-  frequencySlider.style('width', windowWidth-120 + 'px');
+  frequencySlider = createSlider(1, 30000);
+  frequencySlider.position(180, 18);
+  frequencySlider.style('width', windowWidth-200 + 'px');
   frequencySlider.mousePressed(function() {
     isSliding = true;
   });
@@ -36,21 +47,22 @@ function setup() {
 
   // Add play/stop button
   playStopButton = createButton('Play/Stop');
-  playStopButton.position(20, 55);
+  playStopButton.position(20, 20);
   playStopButton.mousePressed(playStopPressed);
   playStopButton.class('playStopButton');
 
   // Add some frequency shifting buttons
   notes = [ ['-', '-'],
             ['+', '+'],
-            ['A', 110.00],
-            ['B', 123.47],
-            ['C', 130.81],
-            ['D', 146.83],
-            ['E', 164.81],
-            ['F', 174.61],
-            ['G', 196.00],
-            ['A', 220.00] ];
+            // ['A', 110.00],
+            // ['B', 123.47],
+            // ['C', 130.81],
+            // ['D', 146.83],
+            // ['E', 164.81],
+            // ['F', 174.61],
+            // ['G', 196.00],
+            // ['A', 220.00]
+            ];
   createNoteButtonList(notes);
 
   // Add extra controls if admin mode
@@ -58,25 +70,22 @@ function setup() {
     checkboxLocalSound = createCheckbox('Local sound', false);
     checkboxLocalSound.elt.onchange = function() {
       config.localSound = checkboxLocalSound.checked();
-      invalidateConfig();
       setFirebaseConfig(config);
     };
     checkboxShowKeys = createCheckbox('Show keys', false);
     checkboxShowKeys.elt.onchange = function() {
       config.showKeys = checkboxShowKeys.checked();
-      invalidateConfig();
       setFirebaseConfig(config);
     };
   }
 
-  invalidateConfig();
 }
 
 function createNoteButtonList(notes) {
   let i=0;
   notes.forEach(function(n) {
     button = createButton(n[0]);
-    button.position(100+30*i++, 55);
+    button.position(100+30*i++, 20);
     button.mousePressed(function(){
       setFrequency(n[1]);
     });
@@ -88,12 +97,12 @@ function createNoteButtonList(notes) {
 
 // Show or hide the play/stop button and frequency keys
 // depending on the current config
-function invalidateConfig() {
-  select('.playStopButton').style('display', adminMode || config.localSound ? 'block' : 'none');
-  selectAll('.keys').forEach(function(e) {
-    e.style('display', config.showKeys ? 'block' : 'none');
-  });
-}
+// function invalidateConfig() {
+//   select('.playStopButton').style('display', adminMode || config.localSound ? 'block' : 'none');
+//   selectAll('.keys').forEach(function(e) {
+//     e.style('display', config.showKeys ? 'block' : 'none');
+//   });
+// }
 
 
 // Handle clicks on -+ABCDEFGA buttons and from Firebase.
@@ -105,27 +114,23 @@ function setFrequency(freq) {
     else { frequency = freq; }
     frequencySlider.value(frequency);
   }
-  if (firebaseFrequency != freq) {
-    setFirebaseFrequency(frequency);
-  }
 }
 
 // Decide which source to prefer for frequency value, called from draw()
 function getFrequency() {
-  // Don't do anything until Firebase frequency is loaded
-  if (firebaseFrequency === undefined) {
-    return undefined;
-  }
-  // If slider is not actively in use, then prefer firebase frequency
-  if (!isSliding && firebaseFrequency != frequency) {
-    setFrequency(firebaseFrequency);
-  }
-  // Otherwise get the latest value from the slider
-  if (frequencySlider.value() != frequency) {
-    setFrequency(frequencySlider.value());
-  }
-  // By now, frequency should be up to date
-  return frequency;
+  // // Don't do anything until Firebase frequency is loaded
+  // if (firebaseFrequency === undefined) {
+  //   return undefined;
+  // }
+  // // If slider is not actively in use, then prefer firebase frequency
+  // if (!isSliding && firebaseFrequency != frequency) {
+  //   setFrequency(firebaseFrequency);
+  // }
+  // // Otherwise get the latest value from the slider
+  // if (frequencySlider.value() != frequency) {
+  //   setFrequency(frequencySlider.value());
+  // }
+  return frequencySlider.value();
 }
 
 // Toggle the oscillator on or off.
@@ -149,15 +154,15 @@ function draw() {
   osc.freq(f);
   
   if (f != undefined) {
-    textSize(12);
-    text('Frequency', 20, 20);
-    textSize(24);
-    text(f +'Hz', 20, 44);
+    //textSize(12);
+    //text('Frequency', 20, 20);
+    textSize(300);
+    text(f +'Hz', 20, 300);
   }
 
   let rectLength = windowWidth-40;
-  rect(20, 100, rectLength, 100);
-  drawDots(rectLength, f);
+  //rect(20, 100, rectLength, 100);
+  //drawDots(rectLength, f);
 }
 
 function drawDots(rectLength, freq) {

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="kube/dist/css/kube.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Colours: #16AACC #3F8899 #02FFA3 #FF4942 #CC165C -->
+    <style>
+      @font-face {
+        font-family: 'Teko';
+        src: url('/fonts/Teko-Regular.ttf') format('truetype');
+      }
+
+      h1, a {
+        font-family: 'Teko';
+      }
+
+      a {
+        color: white;
+      }
+
+      a:hover {
+        color: #F51FAB;
+      }
+
+      body {
+        background: rgba(63, 136, 153, 0.4);
+        padding: 20px;
+        color: white;
+      }
+
+      div.hero {
+        padding: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+        border-radius: 4px;
+        background: #3F8899;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="is-row is-stack-20">
+      <div class="is-col is-10 hero" style="background: #3F8899">
+        <a href="/"><h1>Back</h1></a>
+      </div>
+      <div class="is-col is-90 hero" style="background: #16AACC">
+        <h1>Soundtrack</h1>
+      </div>
+    </div>
+
+    <div class="is-row is-stack-20">
+      <div class="is-col is-50 hero" style="background: #16AACC">
+        <h1>Weather Warlock</h1>
+        <audio
+          controls
+          src="/sounds/weatherwarlock.mp3">
+         </audio>
+      </div>
+
+      <div class="is-col is-50 hero" style="background: #16AACC">
+        <h1>Soothing Sounds for Babies</h1>
+        <audio
+          controls
+          src="/sounds/raymondscott-musicbox.mp3">
+         </audio>
+      </div>
+    </div>
+  </body>
+
+</html>

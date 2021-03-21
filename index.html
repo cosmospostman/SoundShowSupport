@@ -2,13 +2,58 @@
 <html lang="en">
   <head>
     <link rel="manifest" href="soundshow.webmanifest">
-    <script src="p5/p5.js"></script>
-    <script src="p5/addons/p5.sound.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="kube/dist/css/kube.css">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Colours: #16AACC #3F8899 #02FFA3 #FF4942 #CC165C -->
+    <style>
+      @font-face {
+        font-family: 'Teko';
+        src: url('/fonts/Teko-Regular.ttf') format('truetype');
+      }
+
+      h1, a {
+        font-family: 'Teko';
+      }
+
+      a {
+        color: white;
+      }
+
+      a:hover {
+        color: #F51FAB;
+      }
+
+      body {
+        background: rgba(63, 136, 153, 0.4);
+        padding: 20px;
+        color: white;
+      }
+
+      div.hero {
+        padding: 8px;
+        text-align: center;
+        border-radius: 4px;
+      }
+    </style>
   </head>
+
   <body>
-    <script src="sketch.js"></script>
+    <div class="is-row is-stack-20">
+      <div class="is-col hero" style="background: #3F8899">
+        <h1>Sound Show</h1>
+      </div>
+    </div>
+
+    <div class="is-row is-stack-20">
+      <div class="is-col is-50 hero" style="background: #16AACC">
+        <a href="/soundtrack.html"><h1>Soundtrack</h1></a>
+      </div>
+      <div class="is-col is-50 hero" style="background: #02FFA3">
+        <a href="/frequency.html"><h1>Frequency generator</h1></a>
+      </div>
+    </div>
   </body>
+
 </html>

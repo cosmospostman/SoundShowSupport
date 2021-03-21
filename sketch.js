@@ -70,27 +70,15 @@ function setup() {
 
 // Handle clicks on -+ buttons
 function setFrequency(freq) {
-  f = getFrequency();
+  f = Math.round(getFrequency());
   if (freq == '+') { f++; }
   else if (freq == '-') { f--; }
-  frequencySlider.value(f);
+  frequencySlider.value(2000*Math.log2(f));
 }
 
 // Decide which source to prefer for frequency value, called from draw()
 function getFrequency() {
-  // // Don't do anything until Firebase frequency is loaded
-  // if (firebaseFrequency === undefined) {
-  //   return undefined;
-  // }
-  // // If slider is not actively in use, then prefer firebase frequency
-  // if (!isSliding && firebaseFrequency != frequency) {
-  //   setFrequency(firebaseFrequency);
-  // }
-  // // Otherwise get the latest value from the slider
-  // if (frequencySlider.value() != frequency) {
-  //   setFrequency(frequencySlider.value());
-  // }
-  return frequencySlider.value();
+  return Math.round(Math.pow(2, (frequencySlider.value() / 2000)));
 }
 
 function backPressed() {

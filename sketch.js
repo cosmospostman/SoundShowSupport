@@ -51,20 +51,6 @@ function setup() {
   playStopButton.mousePressed(playStopPressed);
   playStopButton.class('playStopButton');
 
-  // Add some frequency shifting buttons
-  notes = [ ['-', '-'],
-            ['+', '+'],
-            // ['A', 110.00],
-            // ['B', 123.47],
-            // ['C', 130.81],
-            // ['D', 146.83],
-            // ['E', 164.81],
-            // ['F', 174.61],
-            // ['G', 196.00],
-            // ['A', 220.00]
-            ];
-  createNoteButtonList(notes);
-
   // Add extra controls if admin mode
   if (adminMode) {
     checkboxLocalSound = createCheckbox('Local sound', false);
@@ -79,20 +65,6 @@ function setup() {
     };
   }
 
-}
-
-function createNoteButtonList(notes) {
-  let i=0;
-  notes.forEach(function(n) {
-    button = createButton(n[0]);
-    button.position(100+30*i++, 20);
-    button.mousePressed(function(){
-      setFrequency(n[1]);
-    });
-    if (n[0] != '+' && n[0] != '-') {
-      button.class('keys');
-    }
-  });
 }
 
 // Show or hide the play/stop button and frequency keys
@@ -145,6 +117,10 @@ function playStopPressed() {
   isPlaying = !isPlaying;
 }
 
+function preload() {
+  font_sharetech = loadFont('fonts/ShareTechMono-Regular.ttf');
+}
+
 // draw() is called by p5js continuously.
 // We also use it to update the oscillator frequency.
 function draw() {
@@ -157,7 +133,9 @@ function draw() {
     //textSize(12);
     //text('Frequency', 20, 20);
     textSize(300);
-    text(f +'Hz', 20, 300);
+    textFont(font_sharetech);
+    textAlign(CENTER, CENTER);
+    text(f + ' Hz', windowWidth/2, windowHeight/2);
   }
 
   let rectLength = windowWidth-40;

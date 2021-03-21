@@ -7,6 +7,7 @@ self.addEventListener('install', (event) => {
         './sketch.js',
         './p5/p5.js',
         './p5/addons/p5.sound.js',
+        './fonts/Teko-Regular.ttf'
       ]);
     })
   );

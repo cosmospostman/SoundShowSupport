@@ -135,7 +135,9 @@ function draw() {
     textSize(300);
     textFont(font_sharetech);
     textAlign(CENTER, CENTER);
-    text(f + ' Hz', windowWidth/2, windowHeight/2);
+    text(f, windowWidth/2, windowHeight/2 - 100);
+    textSize(200);
+    text("Hz", windowWidth/2, windowHeight/2 + 120);
   }
 
   let rectLength = windowWidth-40;

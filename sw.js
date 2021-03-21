@@ -5,6 +5,7 @@ self.addEventListener('install', (event) => {
         './index.html',
         './frequency.html',
         './soundtrack.html',
+        './common.js',
         './style.css',
         './sketch.js',
         './p5/p5.js',

@@ -6,6 +6,10 @@ let isPlaying = false;
 let adminMode = false;
 let isSliding = false;
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
 // setup() is called by p5js once at program start.
 function setup() {
   // Check url params for ?admin=true
@@ -19,8 +23,7 @@ function setup() {
 
   // Add frequency slider
   frequencySlider = createSlider(1, 30000);
-  frequencySlider.position(180, 18);
-  frequencySlider.style('width', windowWidth-200 + 'px');
+  frequencySlider.position(360, 18);
   frequencySlider.mousePressed(function() {
     isSliding = true;
   });
@@ -35,46 +38,42 @@ function setup() {
   });
 
   // Add play/stop button
-  playStopButton = createButton('Play/Stop');
+  playStopButton = createButton('Back');
   playStopButton.position(20, 20);
-  playStopButton.mousePressed(playStopPressed);
-  playStopButton.class('playStopButton');
+  playStopButton.mousePressed(backPressed);
+  playStopButton.class('button');
 
-  // Add extra controls if admin mode
-  if (adminMode) {
-    checkboxLocalSound = createCheckbox('Local sound', false);
-    checkboxLocalSound.elt.onchange = function() {
-      config.localSound = checkboxLocalSound.checked();
-      setFirebaseConfig(config);
-    };
-    checkboxShowKeys = createCheckbox('Show keys', false);
-    checkboxShowKeys.elt.onchange = function() {
-      config.showKeys = checkboxShowKeys.checked();
-      setFirebaseConfig(config);
-    };
-  }
+  // Add play/stop button
+  playStopButton = createButton('Play/Stop');
+  playStopButton.position(110, 20);
+  playStopButton.mousePressed(playStopPressed);
+  playStopButton.class('button');
+
+  // Add play/stop button
+  minusButton = createButton('-');
+  minusButton.position(230, 20);
+  minusButton.mousePressed(function(){
+    setFrequency("-");
+  });
+  minusButton.class('button');
+
+    // Add play/stop button
+  plusButton = createButton('+');
+  plusButton.position(290, 20);
+  plusButton.mousePressed(function(){
+    setFrequency("+");
+  });
+  plusButton.class('button');
 
 }
 
-// Show or hide the play/stop button and frequency keys
-// depending on the current config
-// function invalidateConfig() {
-//   select('.playStopButton').style('display', adminMode || config.localSound ? 'block' : 'none');
-//   selectAll('.keys').forEach(function(e) {
-//     e.style('display', config.showKeys ? 'block' : 'none');
-//   });
-// }
 
-
-// Handle clicks on -+ABCDEFGA buttons and from Firebase.
-// Set local state, update the slider, and Firebase if needed.
+// Handle clicks on -+ buttons
 function setFrequency(freq) {
-  if (freq != frequency) {
-    if (freq == '+') { frequency++; }
-    else if (freq == '-') { frequency--; }
-    else { frequency = freq; }
-    frequencySlider.value(frequency);
-  }
+  f = getFrequency();
+  if (freq == '+') { f++; }
+  else if (freq == '-') { f--; }
+  frequencySlider.value(f);
 }
 
 // Decide which source to prefer for frequency value, called from draw()
@@ -92,6 +91,10 @@ function getFrequency() {
   //   setFrequency(frequencySlider.value());
   // }
   return frequencySlider.value();
+}
+
+function backPressed() {
+  window.location.href = '/';
 }
 
 // Toggle the oscillator on or off.
@@ -113,8 +116,9 @@ function preload() {
 // draw() is called by p5js continuously.
 // We also use it to update the oscillator frequency.
 function draw() {
-  background(220);
-  
+  background(color(179, 207, 213));
+  frequencySlider.style('width', windowWidth-380 + 'px');
+
   f = getFrequency();
   osc.freq(f);
   
@@ -130,8 +134,6 @@ function draw() {
   }
 
   let rectLength = windowWidth-40;
-  //rect(20, 100, rectLength, 100);
-  //drawDots(rectLength, f);
 }
 
 function drawDots(rectLength, freq) {

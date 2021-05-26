@@ -135,7 +135,7 @@ void initializeCamera( int desiredWidth, int desiredHeight ) {
     println("There are no cameras available for capture.");
     exit();
   } else {
-    cam = new Capture(this, desiredWidth, desiredHeight);
+    cam = new Capture(this, desiredWidth, desiredHeight, cameras[0]);
     cam.start();
   }
 }

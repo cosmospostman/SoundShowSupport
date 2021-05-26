@@ -8,6 +8,9 @@ import georegression.struct.shapes.*;
 Capture cam;
 SimpleTrackerObject tracker;
 SqrOsc square;
+final int CAMERA_WIDTH = 800;  //px
+final int CAMERA_HEIGHT = 600; //px
+final int MARGIN = 100;        //px
 
 // storage for where the use selects the target and the current target location
 Quadrilateral_F64 target = new Quadrilateral_F64();
@@ -19,7 +22,7 @@ int mode = 0;
 
 void setup() {
   // Open up the camera so that it has a video feed to process
-  initializeCamera(800, 600);
+  initializeCamera(CAMERA_WIDTH, CAMERA_HEIGHT);
   surface.setSize(cam.width, cam.height);
 
   // Select which tracker you want to use by uncommenting and commenting the lines below
@@ -36,7 +39,7 @@ void setup() {
 void setupOscillator() { 
   // Create square wave oscillator.
   square = new SqrOsc(this);
-  square.freq(50);
+  square.freq(1);
   square.play();
 }
 
@@ -79,14 +82,31 @@ void draw() {
   } else if ( mode == 1 || mode == 2 || mode == 3) {
     if ( targetVisible ) {
       drawTarget();
-      print(target.a.y + "\n");
-      square.freq((float)target.a.y);
+      setFrequencyFromYCoord((float)target.a.y);
     } else {
       text("Can't Detect Target", width/2, height/4);
     }
   } else if ( mode == 100 ) {
     text("Initialization Failed.\nSelect again.", width/2, height/4);
   }
+}
+
+void setFrequencyFromYCoord(float y) {
+  float rawY = y;
+  // Make 0hz be bottom of the screen
+  y = CAMERA_HEIGHT - y;
+  if (y < 0) { y = 0; }
+  // Scale to 30,000hz
+  y = y * (30000 / CAMERA_HEIGHT);
+  // Log scale 
+  y = makeItLogScale(y);
+  
+  println(rawY + "\t" + y);
+  square.freq(y);
+}
+
+float makeItLogScale(float linearValue) {
+  return Math.round(Math.pow(2, (linearValue / 2000)));
 }
 
 void mousePressed() {

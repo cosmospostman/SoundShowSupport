@@ -4,10 +4,12 @@ import boofcv.processing.*;
 import boofcv.struct.image.*;
 import georegression.struct.point.*;
 import georegression.struct.shapes.*;
+import websockets.*;
 
 Capture cam;
 SimpleTrackerObject tracker;
 SqrOsc square;
+WebsocketServer ws;
 final int CAMERA_WIDTH = 800;  //px
 final int CAMERA_HEIGHT = 600; //px
 final int MARGIN = 100;        //px
@@ -33,14 +35,25 @@ void setup() {
 
   f = createFont("Arial", 32, true);
   
+  startWebSocketServer();
   setupOscillator();
+}
+
+void startWebSocketServer() {
+  // Initiates the websocket server, and listens for incoming connections on ws://localhost:8000/synth
+  ws = new WebsocketServer(this, 8000, "/synth/frequency");
+  println("WebsocketServer listening on port 8000 /synth/frequency");
+}
+
+void sendFrequency(float frequency) {
+  ws.sendMessage("" + frequency);
 }
 
 void setupOscillator() { 
   // Create square wave oscillator.
   square = new SqrOsc(this);
   square.freq(1);
-  square.play();
+//  square.play();
 }
 
 void draw() {
@@ -101,8 +114,9 @@ void setFrequencyFromYCoord(float y) {
   // Log scale 
   y = makeItLogScale(y);
   
-  println(rawY + "\t" + y);
+  // println(rawY + "\t" + y);
   square.freq(y);
+  sendFrequency(y);
 }
 
 float makeItLogScale(float linearValue) {

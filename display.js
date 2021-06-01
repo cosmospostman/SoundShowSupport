@@ -23,7 +23,7 @@ function setup() {
 
   // Add frequency slider
   frequencySlider = createSlider(1, 30000);
-  frequencySlider.position(360, 18);
+  frequencySlider.position(20, windowHeight - 50);
   frequencySlider.mousePressed(function() {
     isSliding = true;
   });
@@ -53,24 +53,31 @@ function setup() {
   minusButton = createButton('-');
   minusButton.position(230, 20);
   minusButton.mousePressed(function(){
-    setFrequency("-");
+    incOrDecFrequency("-");
   });
   minusButton.class('button');
 
-    // Add play/stop button
+  // Add play/stop button
   plusButton = createButton('+');
   plusButton.position(290, 20);
   plusButton.mousePressed(function(){
-    setFrequency("+");
+    incOrDecFrequency("+");
   });
   plusButton.class('button');
 
 }
 
 
-// Handle clicks on -+ buttons
 function setFrequency(freq) {
   f = Math.round(freq);
+  frequencySlider.value(2000*Math.log2(f));
+}
+
+// Handle clicks on -+ buttons
+function incOrDecFrequency(button) {
+  f = Math.round(getFrequency());
+  if (button == '+') { f++; }
+  else if (button == '-') { f--; }
   frequencySlider.value(2000*Math.log2(f));
 }
 
@@ -103,7 +110,9 @@ function preload() {
 // We also use it to update the oscillator frequency.
 function draw() {
   background(color(179, 207, 213));
-  frequencySlider.style('width', windowWidth-380 + 'px');
+  frequencySlider.style('width', windowHeight-80 + 'px');
+  frequencySlider.style('transform', 'rotate(-90deg)');
+  frequencySlider.style('transform-origin', '16px 25px');
 
   f = getFrequency();
   osc.freq(f);

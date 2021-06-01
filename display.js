@@ -80,6 +80,28 @@ function setup() {
   });
   plusButton.class('button');
 
+  notes = [
+    ['C', 261.63],
+    ['D', 293.66],
+    ['E', 329.63],
+    ['F', 349.23],
+    ['G', 392.00],
+    ['A', 440.00],
+    ['B', 493.88],
+    ['C', 523.25] ];
+    noteButtonList(notes);
+}
+
+function noteButtonList(notes) {
+  let i=0;
+  notes.forEach(function(n) {
+    button = createButton(n[0]);
+    button.position(410+60*i++, 20);
+    button.class('button');
+    button.mousePressed(function(){
+      setFrequency(n[1]);
+    });
+  });
 }
 
 function setFrequency(freq) {
@@ -162,10 +184,9 @@ function connectWebSocket() {
     if (isCameraControlled) {
       setFrequency(event.data);
     }
-});
+  });
 }
 
 function closeWebSocket() {
   //socket.close();
 }
-

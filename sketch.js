@@ -64,9 +64,7 @@ function setup() {
     setFrequency("+");
   });
   plusButton.class('button');
-
 }
-
 
 // Handle clicks on -+ buttons
 function setFrequency(freq) {

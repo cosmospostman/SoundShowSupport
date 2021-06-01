@@ -3,8 +3,10 @@ let osc;
 let frequency;
 let frequencySlider;
 let isPlaying = false;
-let adminMode = false;
 let isSliding = false;
+let isCameraControlled = false;
+
+var websocket;
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -12,9 +14,6 @@ function windowResized() {
 
 // setup() is called by p5js once at program start.
 function setup() {
-  // Check url params for ?admin=true
-  let params = getURLParams();
-  adminMode = params.admin;
 
   // Canvas and oscillator
   let cnv = createCanvas(windowWidth, windowHeight);
@@ -37,36 +36,51 @@ function setup() {
     isSliding = false;
   });
 
-  // Add play/stop button
+  // BACK
   playStopButton = createButton('Back');
   playStopButton.position(20, 20);
   playStopButton.mousePressed(backPressed);
   playStopButton.class('button');
 
-  // Add play/stop button
+  // PLAY/STOP
   playStopButton = createButton('Play/Stop');
   playStopButton.position(110, 20);
   playStopButton.mousePressed(playStopPressed);
   playStopButton.class('button');
 
-  // Add play/stop button
+  // NETWORK SETUP
+  controlSourceButton = createButton('LOC');
+  controlSourceButton.position(200, 20);
+  controlSourceButton.mousePressed(function(){
+    isCameraControlled = !isCameraControlled;
+    controlSourceButton.elt.innerText = isCameraControlled ? "CAM" : "LOC";
+    if (isCameraControlled) {
+      connectWebSocket();
+      frequencySlider.hide();
+    } else {
+      closeWebSocket();
+      frequencySlider.show();
+    }
+  });
+  controlSourceButton.class('button');
+
+  // LESS FREQ
   minusButton = createButton('-');
-  minusButton.position(230, 20);
+  minusButton.position(290, 20);
   minusButton.mousePressed(function(){
     incOrDecFrequency("-");
   });
   minusButton.class('button');
 
-  // Add play/stop button
+  // MORE FREQ
   plusButton = createButton('+');
-  plusButton.position(290, 20);
+  plusButton.position(350, 20);
   plusButton.mousePressed(function(){
     incOrDecFrequency("+");
   });
   plusButton.class('button');
 
 }
-
 
 function setFrequency(freq) {
   f = Math.round(freq);
@@ -77,7 +91,10 @@ function setFrequency(freq) {
 function incOrDecFrequency(button) {
   f = Math.round(getFrequency());
   if (button == '+') { f++; }
-  else if (button == '-') { f--; }
+  else if (button == '-') { 
+    if (f == 1) { return; }
+    f--; 
+  }
   frequencySlider.value(2000*Math.log2(f));
 }
 
@@ -114,6 +131,8 @@ function draw() {
   frequencySlider.style('transform', 'rotate(-90deg)');
   frequencySlider.style('transform-origin', '16px 25px');
 
+  playStopButton.elt.innerText = isPlaying ? "Stop" : "Play";
+
   f = getFrequency();
   osc.freq(f);
   
@@ -131,11 +150,22 @@ function draw() {
   let rectLength = windowWidth-40;
 }
 
-// Create WebSocket connection.
-const socket = new WebSocket('ws://localhost:8000/synth/frequency');
+function getWebSocketAddress() {
+  return 'ws://' + window.location.hostname + ':8000/synth/frequency'
+}
 
-// Listen for messages
-socket.addEventListener('message', function (event) {
+function connectWebSocket() {
+  socket = new WebSocket(getWebSocketAddress());
+  // Listen for messages
+  socket.addEventListener('message', function (event) {
     console.log('Message from server ', event.data);
-    setFrequency(event.data);
+    if (isCameraControlled) {
+      setFrequency(event.data);
+    }
 });
+}
+
+function closeWebSocket() {
+  //socket.close();
+}
+

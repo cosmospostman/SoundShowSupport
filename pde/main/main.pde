@@ -28,10 +28,10 @@ void setup() {
   surface.setSize(cam.width, cam.height);
 
   // Select which tracker you want to use by uncommenting and commenting the lines below
-  tracker = Boof.trackerCirculant(null, ImageDataType.F32);
+      tracker = Boof.trackerCirculant(null, ImageDataType.F32);
 //    tracker = Boof.trackerTld(null,ImageDataType.F32);
 //    tracker = Boof.trackerMeanShiftComaniciu(null, ImageType.ms(3,GrayF32.class));
-//    tracker = Boof.trackerSparseFlow(null, ImageDataType.F32);
+//    tracker = Boof.trackerSparseFlow(config, ImageDataType.F32);
 
   f = createFont("Arial", 32, true);
   
@@ -95,7 +95,8 @@ void draw() {
   } else if ( mode == 1 || mode == 2 || mode == 3) {
     if ( targetVisible ) {
       drawTarget();
-      setFrequencyFromYCoord((float)target.a.y);
+      //setFrequencyFromYCoord((float)target.a.y);
+      setFrequencyFromYCoord((float)target.a.x);
     } else {
       text("Can't Detect Target", width/2, height/4);
     }
@@ -118,6 +119,22 @@ void setFrequencyFromYCoord(float y) {
   square.freq(y);
   sendFrequency(y);
 }
+
+void setFrequencyFromXCoord(float x) {
+  float rawX = x;
+  // Make 0hz be bottom of the screen
+  x = CAMERA_WIDTH - x;
+  if (x < 0) { x = 0; }
+  // Scale to 30,000hz
+  x = x * (30000 / CAMERA_WIDTH);
+  // Log scale 
+  x = makeItLogScale(x);
+  
+  println(rawX + "\t" + x);
+  square.freq(x);
+  sendFrequency(x);
+}
+
 
 float makeItLogScale(float linearValue) {
   return Math.round(Math.pow(2, (linearValue / 2000)));
@@ -169,7 +186,7 @@ void initializeCamera( int desiredWidth, int desiredHeight ) {
     println("There are no cameras available for capture.");
     exit();
   } else {
-    cam = new Capture(this, desiredWidth, desiredHeight, cameras[0]);
+    cam = new Capture(this, desiredWidth, desiredHeight, cameras[1]);
     cam.start();
   }
 }

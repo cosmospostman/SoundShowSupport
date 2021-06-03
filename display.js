@@ -6,7 +6,26 @@ let isPlaying = false;
 let isSliding = false;
 let isCameraControlled = false;
 
+let table_notesLookup;
+let noteFrequencies = {};
+
+let table_overTheRainbow;
+
 var websocket;
+
+function preload() {
+  font_sharetech = loadFont('fonts/ShareTechMono-Regular.ttf');
+  table_notesLookup = loadTable('data/notes.csv', 'csv');
+  table_overTheRainbow = loadTable('data/overtherainbow.csv', 'csv');
+}
+
+function loadNoteFrequencies() {
+  table_notesLookup.rows.forEach(function(e) {
+    let name = e.arr[0] + e.arr[1];
+    let freq = e.arr[2];
+    noteFrequencies[name] = freq;
+  });
+}
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -14,6 +33,7 @@ function windowResized() {
 
 // setup() is called by p5js once at program start.
 function setup() {
+  loadNoteFrequencies();
 
   // Canvas and oscillator
   let cnv = createCanvas(windowWidth, windowHeight);
@@ -141,10 +161,6 @@ function playStopPressed() {
   isPlaying = !isPlaying;
 }
 
-function preload() {
-  font_sharetech = loadFont('fonts/ShareTechMono-Regular.ttf');
-}
-
 // draw() is called by p5js continuously.
 // We also use it to update the oscillator frequency.
 function draw() {
@@ -189,4 +205,22 @@ function connectWebSocket() {
 
 function closeWebSocket() {
   //socket.close();
+}
+
+function playOverTheRainbow() {
+  osc.start();
+  let time = 0;
+  let time_adjustment = 0.5;
+  table_overTheRainbow.rows.forEach(function(e) {
+    let note = e.arr[0];
+    console.log("Processed " + note + " timeout " + time);
+    setTimeout(function(){
+      console.log("Playing " + noteFrequencies[note]);
+      setFrequency(noteFrequencies[note]);
+    }, time);
+    time = time + time_adjustment * parseInt(e.arr[1]);
+  });
+  setTimeout(function(){
+    osc.stop()
+  }, time);
 }

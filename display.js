@@ -208,6 +208,7 @@ function closeWebSocket() {
 }
 
 function playOverTheRainbow() {
+  isPlaying = true;
   osc.start();
   let time = 0;
   let time_adjustment = 0.5;
@@ -220,7 +221,10 @@ function playOverTheRainbow() {
     }, time);
     time = time + time_adjustment * parseInt(e.arr[1]);
   });
+
   setTimeout(function(){
+    isPlaying = false;
     osc.stop()
   }, time);
+
 }

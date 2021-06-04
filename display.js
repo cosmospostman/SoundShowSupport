@@ -100,6 +100,14 @@ function setup() {
   });
   plusButton.class('button');
 
+  // RAINBOWS
+  rainbowButton = createButton('RBW');
+  rainbowButton.position(410, 20);
+  rainbowButton.mousePressed(function(){
+    playOverTheRainbow();
+  });
+  rainbowButton.class('button');
+
   notes = [
     ['C', 261.63],
     ['D', 293.66],
@@ -116,7 +124,7 @@ function noteButtonList(notes) {
   let i=0;
   notes.forEach(function(n) {
     button = createButton(n[0]);
-    button.position(410+60*i++, 20);
+    button.position(500+60*i++, 20);
     button.class('button');
     button.mousePressed(function(){
       setFrequency(n[1]);

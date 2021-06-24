@@ -197,7 +197,7 @@ function draw() {
 }
 
 function getWebSocketAddress() {
-  return 'ws://' + 192.168.43.158 + ':8000/synth/frequency'
+  return 'ws://' + window.location.hostname + ':8000/synth/frequency'
 }
 
 function connectWebSocket() {
